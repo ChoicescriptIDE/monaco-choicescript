@@ -25,14 +25,8 @@ export class CSSWorker {
 		this._languageSettings = createData.languageSettings;
 		this._languageId = createData.languageId;
 		switch (this._languageId) {
-			case 'css':
+			case 'choicescript':
 				this._languageService = cssService.getCSSLanguageService();
-				break;
-			case 'less':
-				this._languageService = cssService.getLESSLanguageService();
-				break;
-			case 'scss':
-				this._languageService = cssService.getSCSSLanguageService();
 				break;
 			default:
 				throw new Error('Invalid language id: ' + this._languageId);
@@ -42,12 +36,12 @@ export class CSSWorker {
 
 	// --- language service host ---------------
 
-	doValidation(uri: string): Thenable<ls.Diagnostic[]> {
+	doSpellCheck(uri: string): Thenable<ls.Diagnostic[]> {
 		let document = this._getTextDocument(uri);
 		if (document) {
 			let stylesheet = this._languageService.parseStylesheet(document);
-			let diagnostics = this._languageService.doValidation(document, stylesheet);
-			return Promise.as(diagnostics)
+			let check = this._languageService.doSpellCheck(document, stylesheet);
+			return Promise.as(check)
 		}
 		return Promise.as([]);
 	}
@@ -87,12 +81,6 @@ export class CSSWorker {
 		let symbols = this._languageService.findDocumentSymbols(document, stylesheet);
 		return Promise.as(symbols);
 	}
-	doCodeActions(uri: string, range: ls.Range, context: ls.CodeActionContext): Thenable<ls.Command[]> {
-		let document = this._getTextDocument(uri);
-		let stylesheet = this._languageService.parseStylesheet(document);
-		let actions = this._languageService.doCodeActions(document, range, context, stylesheet);
-		return Promise.as(actions);
-	}
 	findDocumentColors(uri: string): Thenable<ls.ColorInformation[]> {
 		let document = this._getTextDocument(uri);
 		let stylesheet = this._languageService.parseStylesheet(document);
@@ -104,17 +92,6 @@ export class CSSWorker {
 		let stylesheet = this._languageService.parseStylesheet(document);
 		let colorPresentations = this._languageService.getColorPresentations(document, stylesheet, color, range);
 		return Promise.as(colorPresentations);
-	}
-	provideFoldingRanges(uri: string, context?: { rangeLimit?: number; }): Thenable<ls.FoldingRange[]> {
-		let document = this._getTextDocument(uri);
-		let ranges = this._languageService.getFoldingRanges(document, context);
-		return Promise.as(ranges);
-	}
-	doRename(uri: string, position: ls.Position, newName: string): Thenable<ls.WorkspaceEdit> {
-		let document = this._getTextDocument(uri);
-		let stylesheet = this._languageService.parseStylesheet(document);
-		let renames = this._languageService.doRename(document, position, newName, stylesheet);
-		return Promise.as(renames);
 	}
 	private _getTextDocument(uri: string): ls.TextDocument {
 		let models = this._ctx.getMirrorModels();

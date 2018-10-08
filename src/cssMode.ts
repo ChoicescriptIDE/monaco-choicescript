@@ -28,9 +28,7 @@ export function setupMode(defaults: LanguageServiceDefaultsImpl): void {
 	monaco.languages.registerDefinitionProvider(languageId, new languageFeatures.DefinitionAdapter(worker));
 	monaco.languages.registerReferenceProvider(languageId, new languageFeatures.ReferenceAdapter(worker));
 	monaco.languages.registerDocumentSymbolProvider(languageId, new languageFeatures.DocumentSymbolAdapter(worker));
-	monaco.languages.registerRenameProvider(languageId, new languageFeatures.RenameAdapter(worker));
 	monaco.languages.registerColorProvider(languageId, new languageFeatures.DocumentColorAdapter(worker));
-	monaco.languages.registerFoldingRangeProvider(languageId, new languageFeatures.FoldingRangeAdapter(worker));
 	new languageFeatures.DiagnosticsAdapter(languageId, worker, defaults);
 }
 

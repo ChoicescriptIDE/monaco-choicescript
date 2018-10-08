@@ -40,10 +40,10 @@ export class DiagnosticsAdapter {
 			let handle: number;
 			this._listener[model.uri.toString()] = model.onDidChangeContent(() => {
 				clearTimeout(handle);
-				handle = setTimeout(() => this._doValidate(model.uri, modeId), 500);
+				handle = setTimeout(() => this._doSpellCheck(model.uri, modeId), 500);
 			});
 
-			this._doValidate(model.uri, modeId);
+			this._doSpellCheck(model.uri, modeId);
 		};
 
 		const onModelRemoved = (model: monaco.editor.IModel): void => {
@@ -89,9 +89,9 @@ export class DiagnosticsAdapter {
 		this._disposables = [];
 	}
 
-	private _doValidate(resource: Uri, languageId: string): void {
+	private _doSpellCheck(resource: Uri, languageId: string): void {
 		this._worker(resource).then(worker => {
-			return worker.doValidation(resource.toString());
+			return worker.doSpellCheck(resource.toString());
 		}).then(diagnostics => {
 			const markers = diagnostics.map(d => toDiagnostics(resource, d));
 			let model = monaco.editor.getModel(resource);
@@ -102,6 +102,7 @@ export class DiagnosticsAdapter {
 			console.error(err);
 		});
 	}
+
 }
 
 
@@ -407,23 +408,6 @@ function toWorkspaceEdit(edit: ls.WorkspaceEdit): monaco.languages.WorkspaceEdit
 	}
 }
 
-
-export class RenameAdapter implements monaco.languages.RenameProvider {
-
-	constructor(private _worker: WorkerAccessor) {
-	}
-
-	provideRenameEdits(model: monaco.editor.IReadOnlyModel, position: Position, newName: string, token: CancellationToken): Thenable<monaco.languages.WorkspaceEdit> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => {
-			return worker.doRename(resource.toString(), fromPosition(position), newName);
-		}).then(edit => {
-			return toWorkspaceEdit(edit);
-		}));
-	}
-}
-
 // --- document symbols ------
 
 function toSymbolKind(kind: ls.SymbolKind): monaco.languages.SymbolKind {
@@ -517,33 +501,6 @@ export class DocumentColorAdapter implements monaco.languages.DocumentColorProvi
 			});
 		}));
 	}
-}
-
-export class FoldingRangeAdapter implements monaco.languages.FoldingRangeProvider {
-
-	constructor(private _worker: WorkerAccessor) {
-	}
-
-	public provideFoldingRanges(model: monaco.editor.IReadOnlyModel, context: monaco.languages.FoldingContext, token: CancellationToken): Thenable<monaco.languages.FoldingRange[]> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => worker.provideFoldingRanges(resource.toString(), context)).then(ranges => {
-			if (!ranges) {
-				return;
-			}
-			return ranges.map(range => {
-				let result: monaco.languages.FoldingRange = {
-					start: range.startLine + 1,
-					end: range.endLine + 1
-				};
-				if (typeof range.kind !== 'undefined') {
-					result.kind = toFoldingRangeKind(<ls.FoldingRangeKind>range.kind);
-				}
-				return result;
-			});
-		}));
-	}
-
 }
 
 function toFoldingRangeKind(kind: ls.FoldingRangeKind): monaco.languages.FoldingRangeKind {

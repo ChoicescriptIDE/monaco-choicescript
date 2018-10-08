@@ -65,17 +65,14 @@ const diagnosticDefault: monaco.languages.css.DiagnosticsOptions = {
 	}
 }
 
+const choicescriptDefaults = new LanguageServiceDefaultsImpl('choicescript', diagnosticDefault);
 const cssDefaults = new LanguageServiceDefaultsImpl('css', diagnosticDefault);
-const scssDefaults = new LanguageServiceDefaultsImpl('scss', diagnosticDefault);
-const lessDefaults = new LanguageServiceDefaultsImpl('less', diagnosticDefault);
 
 
 // Export API
 function createAPI(): typeof monaco.languages.css {
 	return {
-		cssDefaults: cssDefaults,
-		lessDefaults: lessDefaults,
-		scssDefaults: scssDefaults
+		choicescriptDefaults: choicescriptDefaults,
 	}
 }
 monaco.languages.css = createAPI();
@@ -86,14 +83,6 @@ function getMode(): monaco.Promise<typeof mode> {
 	return monaco.Promise.wrap(import('./cssMode'))
 }
 
-monaco.languages.onLanguage('less', () => {
-	getMode().then(mode => mode.setupMode(lessDefaults));
-});
-
-monaco.languages.onLanguage('scss', () => {
-	getMode().then(mode => mode.setupMode(scssDefaults));
-});
-
-monaco.languages.onLanguage('css', () => {
-	getMode().then(mode => mode.setupMode(cssDefaults));
+monaco.languages.onLanguage('choicescript', () => {
+	getMode().then(mode => mode.setupMode(choicescriptDefaults));
 });

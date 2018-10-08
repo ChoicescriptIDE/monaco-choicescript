@@ -33,7 +33,5 @@ declare module monaco.languages.css {
 		setDiagnosticsOptions(options: DiagnosticsOptions): void;
 	}
 
-	export var cssDefaults: LanguageServiceDefaults;
-	export var lessDefaults: LanguageServiceDefaults;
-	export var scssDefaults: LanguageServiceDefaults;
+	export var choicescriptDefaults: LanguageServiceDefaults;
 }
