@@ -8441,19 +8441,18 @@ var __extends = (this && this.__extends) || (function () {
         }
         CSSpellCheck.prototype.configure = function (settings) {
             this.settings = settings;
-        };
-        CSSpellCheck.prototype.doSpellCheck = function (document, stylesheet, settings) {
-            if (settings === void 0) { settings = this.settings; }
-            if (settings && settings.validate === false) {
-                return [];
-            }
-            // Might be a better place to do this...
             this.typo = new typo_1.Typo("", "", "", {
                 platform: 'any'
             });
             this.typo = new typo_1.Typo("en_US", this.typo._readFile("https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries/en_US/en_US.aff"), this.typo._readFile("https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries/en_US/en_US.dic"), {
                 platform: 'any'
             });
+        };
+        CSSpellCheck.prototype.doSpellCheck = function (document, stylesheet, settings) {
+            if (settings === void 0) { settings = this.settings; }
+            if (settings && settings.validate === false) {
+                return [];
+            }
             var entries = [];
             entries.push.apply(entries, nodes.ParseErrorCollector.entries(stylesheet));
             entries.push.apply(entries, spellcheck_1.SpellCheckVisitor.entries(stylesheet, document, null, (nodes.Level.Warning | nodes.Level.Error), this.typo));
@@ -8554,7 +8553,7 @@ var __extends = (this && this.__extends) || (function () {
 //# sourceMappingURL=cssLanguageService.js.map;
 define('vscode-css-languageservice', ['vscode-css-languageservice/cssLanguageService'], function (main) { return main; });
 
-define('vs/language/css/cssWorker',["require", "exports", "vscode-css-languageservice", "vscode-languageserver-types"], function (require, exports, cssService, ls) {
+define('vs/language/choicescript/choicescriptWorker',["require", "exports", "vscode-css-languageservice", "vscode-languageserver-types"], function (require, exports, choicescriptService, ls) {
     /*---------------------------------------------------------------------------------------------
      *  Copyright (c) Microsoft Corporation. All rights reserved.
      *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -8569,7 +8568,7 @@ define('vs/language/css/cssWorker',["require", "exports", "vscode-css-languagese
             this._languageId = createData.languageId;
             switch (this._languageId) {
                 case 'choicescript':
-                    this._languageService = cssService.getCSSLanguageService();
+                    this._languageService = choicescriptService.getCSSLanguageService();
                     break;
                 default:
                     throw new Error('Invalid language id: ' + this._languageId);

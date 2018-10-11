@@ -14,7 +14,7 @@
 	// Loading basic-languages to get the css language definition
 	var paths = {
 		'vs/basic-languages': '../node_modules/monaco-languages/release/dev',
-		'vs/language/css': '../release/dev',
+		'vs/language/choicescript': '../release/dev',
 		'vs': '../node_modules/monaco-editor-core/dev/vs'
 	}
 	if (document.location.protocol === 'http:') {
@@ -22,7 +22,7 @@
 		let testIndex = document.location.pathname.indexOf('/test/');
 		if (testIndex !== -1) {
 			let prefix = document.location.pathname.substr(0, testIndex);
-			paths['vs/language/css'] = prefix + '/release/dev';
+			paths['vs/language/choicescript'] = prefix + '/release/dev';
 		}
 	}
 	var require = {
@@ -37,7 +37,7 @@
 	require([
 		'vs/basic-languages/monaco.contribution',
 		'vs/basic-languages/choicescript/choicescript.contribution',
-		'vs/language/css/monaco.contribution',
+		'vs/language/choicescript/monaco.contribution',
 	], function() {
 		window.editor = monaco.editor.create(document.getElementById('container'), {
 			value: getCode(),

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 var Promise = monaco.Promise;
-import * as cssService from './_deps/vscode-css-languageservice/cssLanguageService';
+import * as choicescriptService from './_deps/vscode-css-languageservice/cssLanguageService';
 import * as ls from './_deps/vscode-languageserver-types/main';
 var CSSWorker = /** @class */ (function () {
     function CSSWorker(ctx, createData) {
@@ -13,7 +13,7 @@ var CSSWorker = /** @class */ (function () {
         this._languageId = createData.languageId;
         switch (this._languageId) {
             case 'choicescript':
-                this._languageService = cssService.getCSSLanguageService();
+                this._languageService = choicescriptService.getCSSLanguageService();
                 break;
             default:
                 throw new Error('Invalid language id: ' + this._languageId);

@@ -1,4 +1,4 @@
-define('vs/language/css/workerManager',["require", "exports"], function (require, exports) {
+define('vs/language/choicescript/workerManager',["require", "exports"], function (require, exports) {
     /*---------------------------------------------------------------------------------------------
      *  Copyright (c) Microsoft Corporation. All rights reserved.
      *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -42,7 +42,7 @@ define('vs/language/css/workerManager',["require", "exports"], function (require
             if (!this._client) {
                 this._worker = monaco.editor.createWebWorker({
                     // module that exports the create() method and returns a `CSSWorker` instance
-                    moduleId: 'vs/language/css/cssWorker',
+                    moduleId: 'vs/language/choicescript/choicescriptWorker',
                     label: this._defaults.languageId,
                     // passed in to the create() method
                     createData: {
@@ -1462,7 +1462,7 @@ define('vs/language/css/workerManager',["require", "exports"], function (require
 
 define('vscode-languageserver-types', ['vscode-languageserver-types/main'], function (main) { return main; });
 
-define('vs/language/css/languageFeatures',["require", "exports", "vscode-languageserver-types"], function (require, exports, ls) {
+define('vs/language/choicescript/languageFeatures',["require", "exports", "vscode-languageserver-types"], function (require, exports, ls) {
     /*---------------------------------------------------------------------------------------------
      *  Copyright (c) Microsoft Corporation. All rights reserved.
      *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -1921,7 +1921,7 @@ define('vs/language/css/languageFeatures',["require", "exports", "vscode-languag
     }
 });
 
-define('vs/language/css/cssMode',["require", "exports", "./workerManager", "./languageFeatures"], function (require, exports, workerManager_1, languageFeatures) {
+define('vs/language/choicescript/choicescriptMode',["require", "exports", "./workerManager", "./languageFeatures"], function (require, exports, workerManager_1, languageFeatures) {
     /*---------------------------------------------------------------------------------------------
      *  Copyright (c) Microsoft Corporation. All rights reserved.
      *  Licensed under the MIT License. See License.txt in the project root for license information.

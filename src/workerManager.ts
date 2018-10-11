@@ -5,7 +5,7 @@
 'use strict';
 
 import {LanguageServiceDefaultsImpl} from './monaco.contribution';
-import {CSSWorker} from './cssWorker';
+import {CSSWorker} from './choicescriptWorker';
 
 import Promise = monaco.Promise;
 import IDisposable = monaco.IDisposable;
@@ -62,7 +62,7 @@ export class WorkerManager {
 			this._worker = monaco.editor.createWebWorker<CSSWorker>({
 
 				// module that exports the create() method and returns a `CSSWorker` instance
-				moduleId: 'vs/language/css/cssWorker',
+				moduleId: 'vs/language/choicescript/choicescriptWorker',
 
 				label: this._defaults.languageId,
 

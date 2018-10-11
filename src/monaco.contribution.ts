@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import * as mode from './cssMode';
+import * as mode from './choicescriptMode';
 
 import Emitter = monaco.Emitter;
 import IEvent = monaco.IEvent;
@@ -12,18 +12,18 @@ import IDisposable = monaco.IDisposable;
 
 // --- CSS configuration and defaults ---------
 
-export class LanguageServiceDefaultsImpl implements monaco.languages.css.LanguageServiceDefaults {
+export class LanguageServiceDefaultsImpl implements monaco.languages.choicescript.LanguageServiceDefaults {
 
-	private _onDidChange = new Emitter<monaco.languages.css.LanguageServiceDefaults>();
-	private _diagnosticsOptions: monaco.languages.css.DiagnosticsOptions;
+	private _onDidChange = new Emitter<monaco.languages.choicescript.LanguageServiceDefaults>();
+	private _diagnosticsOptions: monaco.languages.choicescript.DiagnosticsOptions;
 	private _languageId: string;
 
-	constructor(languageId: string, diagnosticsOptions: monaco.languages.css.DiagnosticsOptions) {
+	constructor(languageId: string, diagnosticsOptions: monaco.languages.choicescript.DiagnosticsOptions) {
 		this._languageId = languageId;
 		this.setDiagnosticsOptions(diagnosticsOptions);
 	}
 
-	get onDidChange(): IEvent<monaco.languages.css.LanguageServiceDefaults> {
+	get onDidChange(): IEvent<monaco.languages.choicescript.LanguageServiceDefaults> {
 		return this._onDidChange.event;
 	}
 
@@ -31,17 +31,17 @@ export class LanguageServiceDefaultsImpl implements monaco.languages.css.Languag
 		return this._languageId;
 	}
 
-	get diagnosticsOptions(): monaco.languages.css.DiagnosticsOptions {
+	get diagnosticsOptions(): monaco.languages.choicescript.DiagnosticsOptions {
 		return this._diagnosticsOptions;
 	}
 
-	setDiagnosticsOptions(options: monaco.languages.css.DiagnosticsOptions): void {
+	setDiagnosticsOptions(options: monaco.languages.choicescript.DiagnosticsOptions): void {
 		this._diagnosticsOptions = options || Object.create(null);
 		this._onDidChange.fire(this);
 	}
 }
 
-const diagnosticDefault: monaco.languages.css.DiagnosticsOptions = {
+const diagnosticDefault: monaco.languages.choicescript.DiagnosticsOptions = {
 	validate: true,
 	lint: {
 		compatibleVendorPrefixes: 'ignore',
@@ -66,21 +66,19 @@ const diagnosticDefault: monaco.languages.css.DiagnosticsOptions = {
 }
 
 const choicescriptDefaults = new LanguageServiceDefaultsImpl('choicescript', diagnosticDefault);
-const cssDefaults = new LanguageServiceDefaultsImpl('css', diagnosticDefault);
-
 
 // Export API
-function createAPI(): typeof monaco.languages.css {
+function createAPI(): typeof monaco.languages.choicescript {
 	return {
 		choicescriptDefaults: choicescriptDefaults,
 	}
 }
-monaco.languages.css = createAPI();
+monaco.languages.choicescript = createAPI();
 
 // --- Registration to monaco editor ---
 
 function getMode(): monaco.Promise<typeof mode> {
-	return monaco.Promise.wrap(import('./cssMode'))
+	return monaco.Promise.wrap(import('./choicescriptMode'))
 }
 
 monaco.languages.onLanguage('choicescript', () => {

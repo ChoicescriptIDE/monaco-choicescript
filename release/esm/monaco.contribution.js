@@ -63,17 +63,16 @@ var diagnosticDefault = {
     }
 };
 var choicescriptDefaults = new LanguageServiceDefaultsImpl('choicescript', diagnosticDefault);
-var cssDefaults = new LanguageServiceDefaultsImpl('css', diagnosticDefault);
 // Export API
 function createAPI() {
     return {
         choicescriptDefaults: choicescriptDefaults,
     };
 }
-monaco.languages.css = createAPI();
+monaco.languages.choicescript = createAPI();
 // --- Registration to monaco editor ---
 function getMode() {
-    return monaco.Promise.wrap(import('./cssMode'));
+    return monaco.Promise.wrap(import('./choicescriptMode'));
 }
 monaco.languages.onLanguage('choicescript', function () {
     getMode().then(function (mode) { return mode.setupMode(choicescriptDefaults); });

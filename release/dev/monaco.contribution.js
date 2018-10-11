@@ -1,4 +1,4 @@
-define('vs/language/css/monaco.contribution',["require", "exports"], function (require, exports) {
+define('vs/language/choicescript/monaco.contribution',["require", "exports"], function (require, exports) {
     /*---------------------------------------------------------------------------------------------
      *  Copyright (c) Microsoft Corporation. All rights reserved.
      *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -65,17 +65,16 @@ define('vs/language/css/monaco.contribution',["require", "exports"], function (r
         }
     };
     var choicescriptDefaults = new LanguageServiceDefaultsImpl('choicescript', diagnosticDefault);
-    var cssDefaults = new LanguageServiceDefaultsImpl('css', diagnosticDefault);
     // Export API
     function createAPI() {
         return {
             choicescriptDefaults: choicescriptDefaults,
         };
     }
-    monaco.languages.css = createAPI();
+    monaco.languages.choicescript = createAPI();
     // --- Registration to monaco editor ---
     function getMode() {
-        return monaco.Promise.wrap(new Promise(function (resolve_1, reject_1) { require(['./cssMode'], resolve_1, reject_1); }));
+        return monaco.Promise.wrap(new Promise(function (resolve_1, reject_1) { require(['./choicescriptMode'], resolve_1, reject_1); }));
     }
     monaco.languages.onLanguage('choicescript', function () {
         getMode().then(function (mode) { return mode.setupMode(choicescriptDefaults); });

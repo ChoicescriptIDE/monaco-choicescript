@@ -21,17 +21,17 @@ const BUNDLED_FILE_HEADER = [
 ].join('\n');
 
 bundleOne('monaco.contribution');
-bundleOne('cssMode');
-bundleOne('cssWorker');
+bundleOne('choicescriptMode');
+bundleOne('choicescriptWorker');
 
 function bundleOne(moduleId, exclude) {
 	requirejs.optimize({
 		baseUrl: 'out/amd/',
-		name: 'vs/language/css/' + moduleId,
+		name: 'vs/language/choicescript/' + moduleId,
 		out: 'release/dev/' + moduleId + '.js',
 		exclude: exclude,
 		paths: {
-			'vs/language/css': REPO_ROOT + '/out/amd'
+			'vs/language/choicescript': REPO_ROOT + '/out/amd'
 		},
 		optimize: 'none',
 		packages: [{

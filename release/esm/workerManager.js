@@ -40,7 +40,7 @@ var WorkerManager = /** @class */ (function () {
         if (!this._client) {
             this._worker = monaco.editor.createWebWorker({
                 // module that exports the create() method and returns a `CSSWorker` instance
-                moduleId: 'vs/language/css/cssWorker',
+                moduleId: 'vs/language/choicescript/choicescriptWorker',
                 label: this._defaults.languageId,
                 // passed in to the create() method
                 createData: {
