@@ -1,5 +1,5 @@
 {
-  "name": "monaco-css",
+  "name": "monaco-choicescript",
   "version": "2.2.0",
   "description": "CSS, LESS and SCSS plugin for the Monaco Editor",
   "scripts": {
