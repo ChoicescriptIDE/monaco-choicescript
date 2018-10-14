@@ -43,6 +43,11 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
     exports.LanguageServiceDefaultsImpl = LanguageServiceDefaultsImpl;
     var diagnosticDefault = {
         validate: true,
+        spellCheckSettings: {
+            rootPath: (typeof window.cside !== "undefined") ? "lib/typo/dictionaries/" : "https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries/",
+            enabled: true,
+            dictionary: "en_US"
+        },
         lint: {
             compatibleVendorPrefixes: 'ignore',
             vendorPrefix: 'warning',
