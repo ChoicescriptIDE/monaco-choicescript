@@ -36,11 +36,11 @@ export class CSSWorker {
 
 	// --- language service host ---------------
 
-	doSpellCheck(uri: string): Thenable<ls.Diagnostic[]> {
+	doValidation(uri: string): Thenable<ls.Diagnostic[]> {
 		let document = this._getTextDocument(uri);
 		if (document) {
 			let stylesheet = this._languageService.parseStylesheet(document);
-			let check = this._languageService.doSpellCheck(document, stylesheet);
+			let check = this._languageService.doValidation(document, stylesheet, this._languageSettings);
 			return Promise.as(check)
 		}
 		return Promise.as([]);

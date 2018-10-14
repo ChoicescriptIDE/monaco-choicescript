@@ -40,10 +40,10 @@ export class DiagnosticsAdapter {
 			let handle: number;
 			this._listener[model.uri.toString()] = model.onDidChangeContent(() => {
 				clearTimeout(handle);
-				handle = setTimeout(() => this._doSpellCheck(model.uri, modeId), 500);
+				handle = setTimeout(() => this._doValidate(model.uri, modeId), 500);
 			});
 
-			this._doSpellCheck(model.uri, modeId);
+			this._doValidate(model.uri, modeId);
 		};
 
 		const onModelRemoved = (model: monaco.editor.IModel): void => {
@@ -89,9 +89,10 @@ export class DiagnosticsAdapter {
 		this._disposables = [];
 	}
 
-	private _doSpellCheck(resource: Uri, languageId: string): void {
+	private _doValidate(resource: Uri, languageId: string): void {
+
 		this._worker(resource).then(worker => {
-			return worker.doSpellCheck(resource.toString());
+			return worker.doValidation(resource.toString());
 		}).then(diagnostics => {
 			const markers = diagnostics.map(d => toDiagnostics(resource, d));
 			let model = monaco.editor.getModel(resource);
