@@ -44,7 +44,8 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
     var diagnosticDefault = {
         validate: true,
         spellCheckSettings: {
-            rootPath: (typeof window.cside !== "undefined") ? "lib/typo/dictionaries/" : "https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries/",
+            // Use github source for testing. CSIDE will set in production.
+            rootPath: (typeof window.cside !== "undefined") ? "" : "https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries/",
             enabled: true,
             dictionary: "en_US"
         },
