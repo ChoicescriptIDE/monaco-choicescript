@@ -44,7 +44,8 @@ export class LanguageServiceDefaultsImpl implements monaco.languages.choicescrip
 const diagnosticDefault: monaco.languages.choicescript.DiagnosticsOptions = {
 	validate: true,
 	spellCheckSettings: {
-		rootPath: (typeof (<any>window).cside !== "undefined") ? "lib/typo/dictionaries/" : "https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries/",
+		// Use github source for testing. CSIDE will set in production.
+		rootPath: (typeof (<any>window).cside !== "undefined") ? "" : "https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries/",
 		enabled: true,
 		dictionary: "en_US"
 	},
