@@ -25,7 +25,7 @@
     "requirejs": "^2.3.5",
     "typescript": "3.0.1",
     "uglify-js": "3.4.7",
-    "vscode-css-languageservice": "ChoiceScriptIDE/vscode-css-languageservice#lib",
-    "vscode-languageserver-types": "3.10.0"
+    "vscode-css-languageservice": "github:ChoiceScriptIDE/vscode-css-languageservice#lib",
+    "vscode-languageserver-types": "^3.10.0"
   }
 }
