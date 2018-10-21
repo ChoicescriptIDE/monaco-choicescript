@@ -313,31 +313,6 @@ function toDocumentHighlightKind(kind: number): monaco.languages.DocumentHighlig
 	return monaco.languages.DocumentHighlightKind.Text;
 }
 
-
-export class DocumentHighlightAdapter implements monaco.languages.DocumentHighlightProvider {
-
-	constructor(private _worker: WorkerAccessor) {
-	}
-
-	public provideDocumentHighlights(model: monaco.editor.IReadOnlyModel, position: Position, token: CancellationToken): Thenable<monaco.languages.DocumentHighlight[]> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => {
-			return worker.findDocumentHighlights(resource.toString(), fromPosition(position))
-		}).then(entries => {
-			if (!entries) {
-				return;
-			}
-			return entries.map(entry => {
-				return <monaco.languages.DocumentHighlight>{
-					range: toRange(entry.range),
-					kind: toDocumentHighlightKind(entry.kind)
-				};
-			});
-		}));
-	}
-}
-
 // --- definition ------
 
 function toLocation(location: ls.Location): monaco.languages.Location {
@@ -345,46 +320,6 @@ function toLocation(location: ls.Location): monaco.languages.Location {
 		uri: Uri.parse(location.uri),
 		range: toRange(location.range)
 	};
-}
-
-export class DefinitionAdapter {
-
-	constructor(private _worker: WorkerAccessor) {
-	}
-
-	public provideDefinition(model: monaco.editor.IReadOnlyModel, position: Position, token: CancellationToken): Thenable<monaco.languages.Definition> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => {
-			return worker.findDefinition(resource.toString(), fromPosition(position));
-		}).then(definition => {
-			if (!definition) {
-				return;
-			}
-			return [toLocation(definition)];
-		}));
-	}
-}
-
-// --- references ------
-
-export class ReferenceAdapter implements monaco.languages.ReferenceProvider {
-
-	constructor(private _worker: WorkerAccessor) {
-	}
-
-	provideReferences(model: monaco.editor.IReadOnlyModel, position: Position, context: monaco.languages.ReferenceContext, token: CancellationToken): Thenable<monaco.languages.Location[]> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => {
-			return worker.findReferences(resource.toString(), fromPosition(position));
-		}).then(entries => {
-			if (!entries) {
-				return;
-			}
-			return entries.map(toLocation);
-		}));
-	}
 }
 
 // --- rename ------
@@ -435,73 +370,6 @@ function toSymbolKind(kind: ls.SymbolKind): monaco.languages.SymbolKind {
 		case ls.SymbolKind.Array: return mKind.Array;
 	}
 	return mKind.Function;
-}
-
-
-export class DocumentSymbolAdapter implements monaco.languages.DocumentSymbolProvider {
-
-	constructor(private _worker: WorkerAccessor) {
-	}
-
-	public provideDocumentSymbols(model: monaco.editor.IReadOnlyModel, token: CancellationToken): Thenable<monaco.languages.DocumentSymbol[]> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => worker.findDocumentSymbols(resource.toString())).then(items => {
-			if (!items) {
-				return;
-			}
-			return items.map(item => ({
-				name: item.name,
-				detail: '',
-				containerName: item.containerName,
-				kind: toSymbolKind(item.kind),
-				range: toRange(item.location.range),
-				selectionRange: toRange(item.location.range)
-			}));
-		}));
-	}
-}
-
-export class DocumentColorAdapter implements monaco.languages.DocumentColorProvider {
-
-	constructor(private _worker: WorkerAccessor) {
-	}
-
-	public provideDocumentColors(model: monaco.editor.IReadOnlyModel, token: CancellationToken): Thenable<monaco.languages.IColorInformation[]> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => worker.findDocumentColors(resource.toString())).then(infos => {
-			if (!infos) {
-				return;
-			}
-			return infos.map(item => ({
-				color: item.color,
-				range: toRange(item.range)
-			}));
-		}));
-	}
-
-	public provideColorPresentations(model: monaco.editor.IReadOnlyModel, info: monaco.languages.IColorInformation, token: CancellationToken): Thenable<monaco.languages.IColorPresentation[]> {
-		const resource = model.uri;
-
-		return wireCancellationToken(token, this._worker(resource).then(worker => worker.getColorPresentations(resource.toString(), info.color, fromRange(info.range))).then(presentations => {
-			if (!presentations) {
-				return;
-			}
-			return presentations.map(presentation => {
-				let item: monaco.languages.IColorPresentation = {
-					label: presentation.label,
-				};
-				if (presentation.textEdit) {
-					item.textEdit = toTextEdit(presentation.textEdit)
-				}
-				if (presentation.additionalTextEdits) {
-					item.additionalTextEdits = presentation.additionalTextEdits.map(toTextEdit)
-				}
-				return item;
-			});
-		}));
-	}
 }
 
 function toFoldingRangeKind(kind: ls.FoldingRangeKind): monaco.languages.FoldingRangeKind {

@@ -24,11 +24,11 @@ export function setupMode(defaults: LanguageServiceDefaultsImpl): void {
 
 	monaco.languages.registerCompletionItemProvider(languageId, new languageFeatures.CompletionAdapter(worker));
 	monaco.languages.registerHoverProvider(languageId, new languageFeatures.HoverAdapter(worker));
-	monaco.languages.registerDocumentHighlightProvider(languageId, new languageFeatures.DocumentHighlightAdapter(worker));
-	monaco.languages.registerDefinitionProvider(languageId, new languageFeatures.DefinitionAdapter(worker));
-	monaco.languages.registerReferenceProvider(languageId, new languageFeatures.ReferenceAdapter(worker));
-	monaco.languages.registerDocumentSymbolProvider(languageId, new languageFeatures.DocumentSymbolAdapter(worker));
-	monaco.languages.registerColorProvider(languageId, new languageFeatures.DocumentColorAdapter(worker));
+	//monaco.languages.registerDocumentHighlightProvider(languageId, new languageFeatures.DocumentHighlightAdapter(worker));
+	//monaco.languages.registerDefinitionProvider(languageId, new languageFeatures.DefinitionAdapter(worker));
+	//monaco.languages.registerReferenceProvider(languageId, new languageFeatures.ReferenceAdapter(worker));
+	//monaco.languages.registerDocumentSymbolProvider(languageId, new languageFeatures.DocumentSymbolAdapter(worker));
+	//monaco.languages.registerColorProvider(languageId, new languageFeatures.DocumentColorAdapter(worker));
 	new languageFeatures.DiagnosticsAdapter(languageId, worker, defaults);
 }
 

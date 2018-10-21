@@ -42,7 +42,7 @@
 		window.editor = monaco.editor.create(document.getElementById('container'), {
 			value: getCode(),
             language: 'choicescript',
-            lightbulb: true,
+            formatOnType: true
 		});
 	});
 	function getCode() {
