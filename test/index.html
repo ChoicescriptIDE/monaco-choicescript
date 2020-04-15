@@ -15,7 +15,8 @@
 	var paths = {
 		'vs/basic-languages': '../node_modules/monaco-languages/release/dev',
 		'vs/language/choicescript': '../release/dev',
-		'vs': '../node_modules/monaco-editor-core/dev/vs'
+		'vs': '../node_modules/monaco-editor-core/dev/vs',
+		'node_modules/monaco-editor-core/dev/vs/base/worker/': './'
 	}
 	if (document.location.protocol === 'http:') {
 		// Add support for running local http server
@@ -24,6 +25,7 @@
 			let prefix = document.location.pathname.substr(0, testIndex);
 			paths['vs/language/choicescript'] = prefix + '/release/dev';
 		}
+		console.log(paths);
 	}
 	var require = {
 		paths: paths
@@ -32,6 +34,7 @@
 <script src="../node_modules/monaco-editor-core/dev/vs/loader.js"></script>
 <script src="../node_modules/monaco-editor-core/dev/vs/editor/editor.main.nls.js"></script>
 <script src="../node_modules/monaco-editor-core/dev/vs/editor/editor.main.js"></script>
+<script src="https://www.chrisfinke.com/files/typo-demo/typo/typo.js"></script>
 
 <script>
 	require([
@@ -41,9 +44,12 @@
 	], function() {
 		window.editor = monaco.editor.create(document.getElementById('container'), {
 			value: getCode(),
-            language: 'choicescript',
-            formatOnType: true
+			language: 'choicescript',
+			theme: 'cs-dark',
+			formatOnType: true,
+			lightbulb: { enabled: true },
 		});
+		console.log("editor create");
 	});
 	function getCode() {
     return "*comment NEW TO CHOICESCRIPT? CLICK THE > 'Run project CSTutorial' BUTTON TO START TUTORIAL\n"

@@ -5,7 +5,7 @@
 'use strict';
 
 import { LanguageServiceDefaultsImpl } from './monaco.contribution';
-import { CSSWorker } from './choicescriptWorker';
+import { ChoiceScriptWorker } from './choicescriptWorker';
 
 import * as ls from 'vscode-languageserver-types';
 
@@ -20,7 +20,7 @@ import IDisposable = monaco.IDisposable;
 
 
 export interface WorkerAccessor {
-	(first: Uri, ...more: Uri[]): Promise<CSSWorker>
+	(first: Uri, ...more: Uri[]): Promise<ChoiceScriptWorker>
 }
 
 // --- diagnostics --- ---
@@ -322,6 +322,25 @@ function toLocation(location: ls.Location): monaco.languages.Location {
 	};
 }
 
+export class DefinitionAdapter {
+
+	constructor(private _worker: WorkerAccessor) {
+	}
+
+	public provideDefinition(model: monaco.editor.IReadOnlyModel, position: Position, token: CancellationToken): Thenable<monaco.languages.Definition> {
+		const resource = model.uri;
+
+		return this._worker(resource).then(worker => {
+			return worker.findDefinition(resource.toString(), fromPosition(position));
+		}).then(definition => {
+			if (!definition) {
+				return;
+			}
+			return [toLocation(definition)];
+		});
+	}
+}
+
 // --- rename ------
 
 function toWorkspaceEdit(edit: ls.WorkspaceEdit): monaco.languages.WorkspaceEdit {
@@ -379,6 +398,30 @@ function toFoldingRangeKind(kind: ls.FoldingRangeKind): monaco.languages.Folding
 		case ls.FoldingRangeKind.Region: return monaco.languages.FoldingRangeKind.Region;
 	}
 	return void 0;
+}
+
+export class DocumentSymbolAdapter implements monaco.languages.DocumentSymbolProvider {
+
+	constructor(private _worker: WorkerAccessor) {
+	}
+
+	public provideDocumentSymbols(model: monaco.editor.IReadOnlyModel, token: CancellationToken): Thenable<monaco.languages.DocumentSymbol[]> {
+		const resource = model.uri;
+
+		return this._worker(resource).then(worker => worker.findDocumentSymbols(resource.toString())).then(items => {
+			if (!items) {
+				return;
+			}
+			return items.map(item => ({
+				name: item.name,
+				detail: '',
+				containerName: item.containerName,
+				kind: toSymbolKind(item.kind),
+				range: toRange(item.location.range),
+				selectionRange: toRange(item.location.range)
+			}));
+		});
+	}
 }
 
 

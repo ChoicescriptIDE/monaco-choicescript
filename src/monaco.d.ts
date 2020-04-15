@@ -9,6 +9,10 @@ declare module monaco.languages.choicescript {
 			rootPath: string,
 			enabled: boolean,
 			dictionary: 'en_US' | 'en_GB'
+			userDictionaries: {
+				persistent: {},
+				session: {}
+			}
 		};
 		readonly lint?: {
 			readonly compatibleVendorPrefixes?: 'ignore' | 'warning' | 'error',

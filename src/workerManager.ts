@@ -5,7 +5,7 @@
 'use strict';
 
 import {LanguageServiceDefaultsImpl} from './monaco.contribution';
-import {CSSWorker} from './choicescriptWorker';
+import {ChoiceScriptWorker} from './choicescriptWorker';
 
 import Promise = monaco.Promise;
 import IDisposable = monaco.IDisposable;
@@ -20,8 +20,8 @@ export class WorkerManager {
 	private _lastUsedTime: number;
 	private _configChangeListener: IDisposable;
 
-	private _worker: monaco.editor.MonacoWebWorker<CSSWorker>;
-	private _client: Promise<CSSWorker>;
+	private _worker: monaco.editor.MonacoWebWorker<ChoiceScriptWorker>;
+	private _client: Promise<ChoiceScriptWorker>;
 
 	constructor(defaults: LanguageServiceDefaultsImpl) {
 		this._defaults = defaults;
@@ -55,13 +55,13 @@ export class WorkerManager {
 		}
 	}
 
-	private _getClient(): Promise<CSSWorker> {
+	private _getClient(): Promise<ChoiceScriptWorker> {
 		this._lastUsedTime = Date.now();
 
 		if (!this._client) {
-			this._worker = monaco.editor.createWebWorker<CSSWorker>({
+			this._worker = monaco.editor.createWebWorker<ChoiceScriptWorker>({
 
-				// module that exports the create() method and returns a `CSSWorker` instance
+				// module that exports the create() method and returns a `ChoiceScriptWorker` instance
 				moduleId: 'vs/language/choicescript/choicescriptWorker',
 
 				label: this._defaults.languageId,
@@ -79,8 +79,8 @@ export class WorkerManager {
 		return this._client;
 	}
 
-	getLanguageServiceWorker(...resources: Uri[]): Promise<CSSWorker> {
-		let _client: CSSWorker;
+	getLanguageServiceWorker(...resources: Uri[]): Promise<ChoiceScriptWorker> {
+		let _client: ChoiceScriptWorker;
 		return toShallowCancelPromise(
 			this._getClient().then((client) => {
 				_client = client

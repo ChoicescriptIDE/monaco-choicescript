@@ -49,7 +49,11 @@ const diagnosticDefault: monaco.languages.choicescript.DiagnosticsOptions = {
 	spellCheckSettings: {
 		rootPath: (typeof (<any>window).cside !== "undefined") ? "" : "https://raw.githubusercontent.com/ChoicescriptIDE/main/latest/source/lib/typo/dictionaries/",
 		enabled: (typeof (<any>window).cside !== "undefined") ? false : true,
-		dictionary: "en_US"
+		dictionary: "en_US",
+		userDictionaries: {
+			persistent: {},
+			session: {}
+		}
 	},
 	lint: {
 		compatibleVendorPrefixes: 'ignore',
