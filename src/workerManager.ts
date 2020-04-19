@@ -4,10 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 
-import {LanguageServiceDefaultsImpl} from './monaco.contribution';
-import {ChoiceScriptWorker} from './choicescriptWorker';
+import { LanguageServiceDefaultsImpl } from './monaco.contribution';
+import { ChoiceScriptWorker } from './choicescriptWorker';
 
-import Promise = monaco.Promise;
 import IDisposable = monaco.IDisposable;
 import Uri = monaco.Uri;
 
@@ -26,7 +25,7 @@ export class WorkerManager {
 	constructor(defaults: LanguageServiceDefaultsImpl) {
 		this._defaults = defaults;
 		this._worker = null;
-		this._idleCheckInterval = setInterval(() => this._checkIfIdle(), 30 * 1000);
+		this._idleCheckInterval = window.setInterval(() => this._checkIfIdle(), 30 * 1000);
 		this._lastUsedTime = 0;
 		this._configChangeListener = this._defaults.onDidChange(() => this._stopWorker());
 	}
@@ -61,8 +60,8 @@ export class WorkerManager {
 		if (!this._client) {
 			this._worker = monaco.editor.createWebWorker<ChoiceScriptWorker>({
 
-				// module that exports the create() method and returns a `ChoiceScriptWorker` instance
-				moduleId: 'vs/language/choicescript/choicescriptWorker',
+				// module that exports the create() method and returns a `CSSWorker` instance
+				moduleId: 'vs/language/choicescript/ChoiceScriptWorker',
 
 				label: this._defaults.languageId,
 
@@ -73,7 +72,7 @@ export class WorkerManager {
 				}
 			});
 
-			this._client = this._worker.getProxy();
+			this._client = <Promise<ChoiceScriptWorker>><any>this._worker.getProxy();
 		}
 
 		return this._client;
@@ -81,26 +80,10 @@ export class WorkerManager {
 
 	getLanguageServiceWorker(...resources: Uri[]): Promise<ChoiceScriptWorker> {
 		let _client: ChoiceScriptWorker;
-		return toShallowCancelPromise(
-			this._getClient().then((client) => {
-				_client = client
-			}).then(_ => {
-				return this._worker.withSyncedResources(resources)
-			}).then(_ => _client)
-		);
+		return this._getClient().then((client) => {
+			_client = client
+		}).then(_ => {
+			return this._worker.withSyncedResources(resources)
+		}).then(_ => _client);
 	}
-}
-
-function toShallowCancelPromise<T>(p: Promise<T>): Promise<T> {
-	let completeCallback: (value: T) => void;
-	let errorCallback: (err: any) => void;
-
-	let r = new Promise<T>((c, e) => {
-		completeCallback = c;
-		errorCallback = e;
-	}, () => { });
-
-	p.then(completeCallback, errorCallback);
-
-	return r;
 }

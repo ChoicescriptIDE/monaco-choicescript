@@ -1,7 +1,7 @@
 const requirejs = require('requirejs');
 const path = require('path');
 const fs = require('fs');
-const UglifyJS = require("uglify-js");
+const Terser = require("terser");
 const helpers = require('monaco-plugin-helpers');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -41,6 +41,10 @@ function bundleOne(moduleId, exclude) {
 		}, {
 			name: 'vscode-languageserver-types',
 			location: path.join(REPO_ROOT, 'node_modules/vscode-languageserver-types/lib/umd'),
+			main: 'main'
+		}, {
+			name: 'vscode-languageserver-textdocument',
+			location: path.join(REPO_ROOT, 'node_modules/vscode-languageserver-textdocument/lib/umd'),
 			main: 'main'
 		}, {
 			name: 'vscode-uri',

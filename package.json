@@ -19,13 +19,17 @@
     "url": "https://github.com/Microsoft/monaco-css/issues"
   },
   "devDependencies": {
-    "monaco-editor-core": "^0.14.6",
+    "monaco-editor-core": "0.20.0",
     "monaco-languages": "github:ChoiceScriptIDE/monaco-languages#lib",
     "monaco-plugin-helpers": "^1.0.2",
-    "requirejs": "^2.3.5",
-    "typescript": "3.0.1",
-    "uglify-js": "3.4.7",
+    "requirejs": "^2.3.6",
+    "typescript": "3.7.5",
+    "terser": "^4.6.3",
     "vscode-css-languageservice": "github:ChoiceScriptIDE/vscode-css-languageservice#lib",
-    "vscode-languageserver-types": "^3.10.0"
+    "vscode-languageserver-types": "3.15.0-next.9",
+    "vscode-languageserver-textdocument": "^1.0.0-next.5"
+  },
+  "dependencies": {
+    "@mturco/context-menu": "^1.0.1"
   }
 }

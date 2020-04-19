@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 'use strict';
 import * as worker from 'monaco-editor-core/esm/vs/editor/editor.worker';
-import { CSSWorker } from './choicescriptWorker';
+import { ChoiceScriptWorker } from './choicescriptWorker';
 self.onmessage = function () {
     // ignore the first message
     worker.initialize(function (ctx, createData) {
-        return new CSSWorker(ctx, createData);
+        return new ChoiceScriptWorker(ctx, createData);
     });
 };

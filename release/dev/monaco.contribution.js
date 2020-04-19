@@ -8,10 +8,11 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
     var Emitter = monaco.Emitter;
     // --- CSS configuration and defaults ---------
     var LanguageServiceDefaultsImpl = /** @class */ (function () {
-        function LanguageServiceDefaultsImpl(languageId, diagnosticsOptions) {
+        function LanguageServiceDefaultsImpl(languageId, diagnosticsOptions, modeConfiguration) {
             this._onDidChange = new Emitter();
             this._languageId = languageId;
             this.setDiagnosticsOptions(diagnosticsOptions);
+            this.setModeConfiguration(modeConfiguration);
         }
         Object.defineProperty(LanguageServiceDefaultsImpl.prototype, "onDidChange", {
             get: function () {
@@ -27,6 +28,13 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
             enumerable: true,
             configurable: true
         });
+        Object.defineProperty(LanguageServiceDefaultsImpl.prototype, "modeConfiguration", {
+            get: function () {
+                return this._modeConfiguration;
+            },
+            enumerable: true,
+            configurable: true
+        });
         Object.defineProperty(LanguageServiceDefaultsImpl.prototype, "diagnosticsOptions", {
             get: function () {
                 return this._diagnosticsOptions;
@@ -38,6 +46,11 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
             this._diagnosticsOptions = options || Object.create(null);
             this._onDidChange.fire(this);
         };
+        LanguageServiceDefaultsImpl.prototype.setModeConfiguration = function (modeConfiguration) {
+            this._modeConfiguration = modeConfiguration || Object.create(null);
+            this._onDidChange.fire(this);
+        };
+        ;
         return LanguageServiceDefaultsImpl;
     }());
     exports.LanguageServiceDefaultsImpl = LanguageServiceDefaultsImpl;
@@ -49,7 +62,11 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
         spellCheckSettings: {
             rootPath: (typeof window.cside !== "undefined") ? "" : "https://raw.githubusercontent.com/ChoicescriptIDE/main/latest/source/lib/typo/dictionaries/",
             enabled: (typeof window.cside !== "undefined") ? false : true,
-            dictionary: "en_US"
+            dictionary: "en_US",
+            userDictionaries: {
+                persistent: {},
+                session: {}
+            }
         },
         lint: {
             compatibleVendorPrefixes: 'ignore',
@@ -72,7 +89,20 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
             idSelector: 'ignore'
         }
     };
-    var choicescriptDefaults = new LanguageServiceDefaultsImpl('choicescript', diagnosticDefault);
+    var modeConfigurationDefault = {
+        completionItems: true,
+        hovers: true,
+        documentSymbols: true,
+        definitions: false,
+        references: false,
+        documentHighlights: false,
+        rename: false,
+        colors: false,
+        foldingRanges: false,
+        diagnostics: true,
+        selectionRanges: false
+    };
+    var choicescriptDefaults = new LanguageServiceDefaultsImpl('choicescript', diagnosticDefault, modeConfigurationDefault);
     // Export API
     function createAPI() {
         return {
@@ -82,7 +112,7 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports"], fu
     monaco.languages.choicescript = createAPI();
     // --- Registration to monaco editor ---
     function getMode() {
-        return monaco.Promise.wrap(new Promise(function (resolve_1, reject_1) { require(['./choicescriptMode'], resolve_1, reject_1); }));
+        return new Promise(function (resolve_1, reject_1) { require(['./choicescriptMode'], resolve_1, reject_1); });
     }
     monaco.languages.onLanguage('choicescript', function () {
         getMode().then(function (mode) { return mode.setupMode(choicescriptDefaults); });
