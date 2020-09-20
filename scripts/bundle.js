@@ -21,26 +21,29 @@ const BUNDLED_FILE_HEADER = [
 ].join('\n');
 
 bundleOne('monaco.contribution');
-bundleOne('cssMode', ['vs/language/css/monaco.contribution']);
-bundleOne('cssWorker');
+bundleOne('choicescriptMode', ['vs/language/choicescript/monaco.contribution']);
+bundleOne('choicescriptWorker');
 
 function bundleOne(moduleId, exclude) {
 	requirejs.optimize(
 		{
 			baseUrl: 'out/amd/',
-			name: 'vs/language/css/' + moduleId,
+			name: 'vs/language/choicescript/' + moduleId,
 			out: 'release/dev/' + moduleId + '.js',
 			exclude: exclude,
 			paths: {
-				'vs/language/css': REPO_ROOT + '/out/amd',
-				'vs/language/css/fillers/monaco-editor-core':
+				'vs/language/choicescript': REPO_ROOT + '/out/amd',
+				'vs/language/choicescript/fillers/monaco-editor-core':
 					REPO_ROOT + '/out/amd/fillers/monaco-editor-core-amd'
 			},
 			optimize: 'none',
 			packages: [
 				{
-					name: 'vscode-css-languageservice',
-					location: path.join(REPO_ROOT, 'node_modules/vscode-css-languageservice/lib/umd'),
+					name: 'vscode-choicescript-languageservice',
+					location: path.join(
+						REPO_ROOT,
+						'node_modules/vscode-choicescript-languageservice/lib/umd'
+					),
 					main: 'cssLanguageService'
 				},
 				{

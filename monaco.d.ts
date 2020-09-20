@@ -86,4 +86,71 @@ declare namespace monaco.languages.css {
 	export const cssDefaults: LanguageServiceDefaults;
 	export const scssDefaults: LanguageServiceDefaults;
 	export const lessDefaults: LanguageServiceDefaults;
+	export interface LanguageServiceDefaultsChoiceScript {
+		readonly languageId: string;
+		readonly onDidChange: IEvent<LanguageServiceDefaultsChoiceScript>;
+		readonly diagnosticsOptions: DiagnosticsOptionsChoiceScript;
+		readonly modeConfiguration: ModeConfiguration;
+		setDiagnosticsOptions(options: DiagnosticsOptionsChoiceScript): void;
+		setModeConfiguration(modeConfiguration: ModeConfiguration): void;
+	}
+	export interface DiagnosticsOptionsChoiceScript {
+		readonly validate: boolean;
+		readonly lint: {
+			readonly enabled: boolean;
+		};
+		readonly spellcheck: {
+			readonly enabled: boolean;
+			readonly dictionaryPath: string;
+			readonly dictionary: 'en_US' | 'en_GB';
+			readonly userDictionaries: {};
+		};
+	}
+	export interface ModeConfiguration {
+		/**
+		 * Defines whether the built-in documentFormattingEdit provider is enabled.
+		 */
+		readonly documentFormattingEdits?: boolean;
+		/**
+		 * Defines whether the built-in documentRangeFormattingEdit provider is enabled.
+		 */
+		readonly documentRangeFormattingEdits?: boolean;
+		/**
+		 * Defines whether the built-in completionItemProvider is enabled.
+		 */
+		readonly completionItems?: boolean;
+		/**
+		 * Defines whether the built-in hoverProvider is enabled.
+		 */
+		readonly hovers?: boolean;
+		/**
+		 * Defines whether the built-in documentSymbolProvider is enabled.
+		 */
+		readonly documentSymbols?: boolean;
+		/**
+		 * Defines whether the built-in tokens provider is enabled.
+		 */
+		readonly tokens?: boolean;
+		/**
+		 * Defines whether the built-in color provider is enabled.
+		 */
+		readonly colors?: boolean;
+		/**
+		 * Defines whether the built-in foldingRange provider is enabled.
+		 */
+		readonly foldingRanges?: boolean;
+		/**
+		 * Defines whether the built-in diagnostic provider is enabled.
+		 */
+		readonly diagnostics?: boolean;
+		/**
+		 * Defines whether the built-in selection range provider is enabled.
+		 */
+		readonly selectionRanges?: boolean;
+		/**
+		 * Defines whether the built-in format provider is enabled.
+		 */
+		readonly autoFormat?: boolean;
+	}
+	export const choicescriptDefaults: LanguageServiceDefaultsChoiceScript;
 }

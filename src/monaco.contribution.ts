@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import * as csmode from './choicescriptMode';
 import * as mode from './cssMode';
 import { languages, Emitter, IEvent } from './fillers/monaco-editor-core';
 
@@ -176,7 +177,11 @@ const modeConfigurationDefault: Required<ModeConfiguration> = {
 	colors: true,
 	foldingRanges: true,
 	diagnostics: true,
-	selectionRanges: true
+	selectionRanges: true,
+	autoFormat: false,
+	documentFormattingEdits: false,
+	documentRangeFormattingEdits: false,
+	tokens: true
 };
 
 export const cssDefaults: LanguageServiceDefaults = new LanguageServiceDefaultsImpl(
@@ -214,4 +219,175 @@ languages.onLanguage('scss', () => {
 
 languages.onLanguage('css', () => {
 	getMode().then((mode) => mode.setupMode(cssDefaults));
+});
+
+export interface LanguageServiceDefaultsChoiceScript {
+	readonly languageId: string;
+	readonly onDidChange: IEvent<LanguageServiceDefaultsChoiceScript>;
+	readonly diagnosticsOptions: DiagnosticsOptionsChoiceScript;
+	readonly modeConfiguration: ModeConfiguration;
+	setDiagnosticsOptions(options: DiagnosticsOptionsChoiceScript): void;
+	setModeConfiguration(modeConfiguration: ModeConfiguration): void;
+}
+
+class LanguageServiceDefaultsChoiceScriptImpl implements LanguageServiceDefaultsChoiceScript {
+	private _onDidChange = new Emitter<LanguageServiceDefaultsChoiceScript>();
+	private _diagnosticsOptions: DiagnosticsOptionsChoiceScript;
+	private _modeConfiguration: ModeConfiguration;
+	private _languageId: string;
+
+	constructor(
+		languageId: string,
+		diagnosticsOptions: DiagnosticsOptionsChoiceScript,
+		modeConfiguration: ModeConfiguration
+	) {
+		this._languageId = languageId;
+		this.setDiagnosticsOptions(diagnosticsOptions);
+		this.setModeConfiguration(modeConfiguration);
+	}
+
+	get onDidChange(): IEvent<LanguageServiceDefaultsChoiceScript> {
+		return this._onDidChange.event;
+	}
+
+	get languageId(): string {
+		return this._languageId;
+	}
+
+	get modeConfiguration(): ModeConfiguration {
+		return this._modeConfiguration;
+	}
+
+	get diagnosticsOptions(): DiagnosticsOptionsChoiceScript {
+		return this._diagnosticsOptions;
+	}
+
+	setDiagnosticsOptions(options: DiagnosticsOptionsChoiceScript): void {
+		this._diagnosticsOptions = options || Object.create(null);
+		this._onDidChange.fire(this);
+	}
+
+	setModeConfiguration(modeConfiguration: ModeConfiguration): void {
+		this._modeConfiguration = modeConfiguration || Object.create(null);
+		this._onDidChange.fire(this);
+	}
+}
+
+export interface DiagnosticsOptionsChoiceScript {
+	readonly validate: boolean;
+	readonly lint: {
+		readonly enabled: boolean;
+	};
+	readonly spellcheck: {
+		readonly enabled: boolean;
+		readonly dictionaryPath: string;
+		readonly dictionary: 'en_US' | 'en_GB';
+		readonly userDictionaries: {};
+	};
+}
+
+export interface ModeConfiguration {
+	/**
+	 * Defines whether the built-in documentFormattingEdit provider is enabled.
+	 */
+	readonly documentFormattingEdits?: boolean;
+
+	/**
+	 * Defines whether the built-in documentRangeFormattingEdit provider is enabled.
+	 */
+	readonly documentRangeFormattingEdits?: boolean;
+
+	/**
+	 * Defines whether the built-in completionItemProvider is enabled.
+	 */
+	readonly completionItems?: boolean;
+
+	/**
+	 * Defines whether the built-in hoverProvider is enabled.
+	 */
+	readonly hovers?: boolean;
+
+	/**
+	 * Defines whether the built-in documentSymbolProvider is enabled.
+	 */
+	readonly documentSymbols?: boolean;
+
+	/**
+	 * Defines whether the built-in tokens provider is enabled.
+	 */
+	readonly tokens?: boolean;
+
+	/**
+	 * Defines whether the built-in color provider is enabled.
+	 */
+	readonly colors?: boolean;
+
+	/**
+	 * Defines whether the built-in foldingRange provider is enabled.
+	 */
+	readonly foldingRanges?: boolean;
+
+	/**
+	 * Defines whether the built-in diagnostic provider is enabled.
+	 */
+	readonly diagnostics?: boolean;
+
+	/**
+	 * Defines whether the built-in selection range provider is enabled.
+	 */
+	readonly selectionRanges?: boolean;
+
+	/**
+	 * Defines whether the built-in format provider is enabled.
+	 */
+	readonly autoFormat?: boolean;
+}
+
+const diagnosticDefaultChoiceScript: Required<DiagnosticsOptionsChoiceScript> = {
+	validate: true,
+	lint: { enabled: true },
+	spellcheck: {
+		enabled: true,
+		dictionaryPath: 'https://raw.githubusercontent.com/cfinke/Typo.js/master/typo/dictionaries',
+		dictionary: 'en_US',
+		userDictionaries: null!
+	}
+};
+
+const modeConfigurationDefaultChoiceScript: Required<ModeConfiguration> = {
+	completionItems: true,
+	hovers: true,
+	documentSymbols: true,
+	definitions: true,
+	references: true,
+	documentHighlights: false,
+	rename: false,
+	colors: false,
+	foldingRanges: false,
+	diagnostics: true,
+	selectionRanges: false,
+	documentFormattingEdits: false,
+	documentRangeFormattingEdits: false,
+	tokens: true,
+	autoFormat: true
+};
+
+export const choicescriptDefaults: LanguageServiceDefaultsChoiceScript = new LanguageServiceDefaultsChoiceScriptImpl(
+	'choicescript',
+	diagnosticDefaultChoiceScript,
+	modeConfigurationDefaultChoiceScript
+);
+
+// export to the global based API
+(<any>languages).choicescript = choicescriptDefaults;
+
+// --- Registration to monaco editor ---
+
+function getCSMode(): Promise<typeof csmode> {
+	return import('./choicescriptMode');
+}
+
+languages.onLanguage('choicescript', () => {
+	//getModeCS('choicescript').then(csmode => csmode.setupMode(choicescriptDefaults));
+	getCSMode().then((mode) => mode.setupMode(choicescriptDefaults));
 });
