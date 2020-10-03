@@ -104,7 +104,7 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports", "./
     exports.scssDefaults = new LanguageServiceDefaultsImpl('scss', diagnosticDefault, modeConfigurationDefault);
     exports.lessDefaults = new LanguageServiceDefaultsImpl('less', diagnosticDefault, modeConfigurationDefault);
     // export to the global based API
-    monaco_editor_core_1.languages.json = { cssDefaults: exports.cssDefaults, lessDefaults: exports.lessDefaults, scssDefaults: exports.scssDefaults };
+    monaco_editor_core_1.languages.css = { cssDefaults: exports.cssDefaults, lessDefaults: exports.lessDefaults, scssDefaults: exports.scssDefaults };
     // --- Registration to monaco editor ---
     function getMode() {
         return new Promise(function (resolve_1, reject_1) { require(['./cssMode'], resolve_1, reject_1); });

@@ -93,7 +93,7 @@ export var cssDefaults = new LanguageServiceDefaultsImpl('css', diagnosticDefaul
 export var scssDefaults = new LanguageServiceDefaultsImpl('scss', diagnosticDefault, modeConfigurationDefault);
 export var lessDefaults = new LanguageServiceDefaultsImpl('less', diagnosticDefault, modeConfigurationDefault);
 // export to the global based API
-languages.json = { cssDefaults: cssDefaults, lessDefaults: lessDefaults, scssDefaults: scssDefaults };
+languages.css = { cssDefaults: cssDefaults, lessDefaults: lessDefaults, scssDefaults: scssDefaults };
 // --- Registration to monaco editor ---
 function getMode() {
     return import('./cssMode');
