@@ -70,17 +70,20 @@ export class DiagnosticsAdapter {
 			})
 		);
 
-		defaults.onDidChange((_) => {
-			editor.getModels().forEach((model) => {
-				if (model.getModeId() === this._languageId) {
-					onModelRemoved(model);
-					onModelAdd(model);
-				}
-			});
-		});
+		this._disposables.push(
+			defaults.onDidChange((_) => {
+				editor.getModels().forEach((model) => {
+					if (model.getModeId() === this._languageId) {
+						onModelRemoved(model);
+						onModelAdd(model);
+					}
+				});
+			})
+		);
 
 		this._disposables.push({
 			dispose: () => {
+				editor.getModels().forEach(onModelRemoved);
 				for (let key in this._listener) {
 					this._listener[key].dispose();
 				}
