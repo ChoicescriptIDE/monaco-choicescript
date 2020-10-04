@@ -199,7 +199,15 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports", "./
     }
     monaco_editor_core_1.languages.onLanguage('choicescript', function () {
         //getModeCS('choicescript').then(csmode => csmode.setupMode(choicescriptDefaults));
-        getCSMode().then(function (mode) { return mode.setupMode(exports.choicescriptDefaults); });
+        getCSMode().then(function (mode) {
+            monaco_editor_core_1.languages.choicescriptDispose = mode.setupMode(exports.choicescriptDefaults);
+            // handle reset on setModeConfiguration
+            exports.choicescriptDefaults.onDidChange(function () {
+                var _a;
+                (_a = monaco_editor_core_1.languages.choicescriptDispose) === null || _a === void 0 ? void 0 : _a.dispose();
+                monaco_editor_core_1.languages.choicescriptDispose = mode.setupMode(exports.choicescriptDefaults);
+            });
+        });
     });
 });
 
