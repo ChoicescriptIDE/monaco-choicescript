@@ -389,5 +389,12 @@ function getCSMode(): Promise<typeof csmode> {
 
 languages.onLanguage('choicescript', () => {
 	//getModeCS('choicescript').then(csmode => csmode.setupMode(choicescriptDefaults));
-	getCSMode().then((mode) => mode.setupMode(choicescriptDefaults));
+	getCSMode().then((mode) => {
+		(<any>languages).choicescriptDispose = mode.setupMode(choicescriptDefaults);
+		// handle reset on setModeConfiguration
+		choicescriptDefaults.onDidChange(() => {
+			(<any>languages).choicescriptDispose?.dispose();
+			(<any>languages).choicescriptDispose = mode.setupMode(choicescriptDefaults);
+		});
+	});
 });
