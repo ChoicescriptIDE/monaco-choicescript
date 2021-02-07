@@ -3,9 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-import { MarkupKind } from '../../_deps/vscode-languageserver-types/main';
+import { MarkupKind } from '../../../vscode-languageserver-types/main';
 export { TextDocument } from '../../../vscode-languageserver-textdocument/lib/esm/main';
-export * from '../../_deps/vscode-languageserver-types/main';
+export * from '../../../vscode-languageserver-types/main';
 export var ClientCapabilities;
 (function (ClientCapabilities) {
     ClientCapabilities.LATEST = {
