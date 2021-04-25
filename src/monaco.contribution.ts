@@ -3,9 +3,15 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { Command } from 'vscode-languageserver-types';
 import * as csmode from './choicescriptMode';
 import * as mode from './cssMode';
-import { languages, Emitter, IEvent } from './fillers/monaco-editor-core';
+import { editor, languages, Emitter, IEvent } from './fillers/monaco-editor-core';
+
+export class DictionaryEvent {
+	word: string;
+	dictionary: string;
+}
 
 export interface DiagnosticsOptions {
 	readonly validate?: boolean;
@@ -224,14 +230,17 @@ languages.onLanguage('css', () => {
 export interface LanguageServiceDefaultsChoiceScript {
 	readonly languageId: string;
 	readonly onDidChange: IEvent<LanguageServiceDefaultsChoiceScript>;
+	readonly onDictionaryChange: IEvent<DictionaryEvent>;
 	readonly diagnosticsOptions: DiagnosticsOptionsChoiceScript;
 	readonly modeConfiguration: ModeConfiguration;
+	addWordToDictionary(accessor: any, dict: string, word: string): void;
 	setDiagnosticsOptions(options: DiagnosticsOptionsChoiceScript): void;
 	setModeConfiguration(modeConfiguration: ModeConfiguration): void;
 }
 
 class LanguageServiceDefaultsChoiceScriptImpl implements LanguageServiceDefaultsChoiceScript {
 	private _onDidChange = new Emitter<LanguageServiceDefaultsChoiceScript>();
+	private _onDidDictionaryChange = new Emitter<DictionaryEvent>();
 	private _diagnosticsOptions: DiagnosticsOptionsChoiceScript;
 	private _modeConfiguration: ModeConfiguration;
 	private _languageId: string;
@@ -239,7 +248,7 @@ class LanguageServiceDefaultsChoiceScriptImpl implements LanguageServiceDefaults
 	constructor(
 		languageId: string,
 		diagnosticsOptions: DiagnosticsOptionsChoiceScript,
-		modeConfiguration: ModeConfiguration
+		modeConfiguration: ModeConfiguration,
 	) {
 		this._languageId = languageId;
 		this.setDiagnosticsOptions(diagnosticsOptions);
@@ -248,6 +257,10 @@ class LanguageServiceDefaultsChoiceScriptImpl implements LanguageServiceDefaults
 
 	get onDidChange(): IEvent<LanguageServiceDefaultsChoiceScript> {
 		return this._onDidChange.event;
+	}
+
+	get onDictionaryChange(): IEvent<DictionaryEvent> {
+		return this._onDidDictionaryChange.event;
 	}
 
 	get languageId(): string {
@@ -260,6 +273,10 @@ class LanguageServiceDefaultsChoiceScriptImpl implements LanguageServiceDefaults
 
 	get diagnosticsOptions(): DiagnosticsOptionsChoiceScript {
 		return this._diagnosticsOptions;
+	}
+
+	addWordToDictionary(accessor: any, dict: string, word: string): void {
+		this._onDidDictionaryChange.fire(<DictionaryEvent>{dictionary: dict, word: word});
 	}
 
 	setDiagnosticsOptions(options: DiagnosticsOptionsChoiceScript): void {
@@ -389,6 +406,9 @@ function getCSMode(): Promise<typeof csmode> {
 
 languages.onLanguage('choicescript', () => {
 	//getModeCS('choicescript').then(csmode => csmode.setupMode(choicescriptDefaults));
+	editor.registerCommand("addWordToDictionary", (accessor, dict, word) => {
+		choicescriptDefaults.addWordToDictionary(accessor, dict, word);
+	});
 	getCSMode().then((mode) => {
 		(<any>languages).choicescriptDispose = mode.setupMode(choicescriptDefaults);
 		// handle reset on setModeConfiguration

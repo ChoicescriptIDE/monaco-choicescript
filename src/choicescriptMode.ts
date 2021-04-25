@@ -84,6 +84,14 @@ export function setupMode(defaults: LanguageServiceDefaultsChoiceScript): IDispo
 				)
 			);*/
 		}
+		if (modeConfiguration.diagnostics) {
+			providers.push(
+				languages.registerCodeActionProvider(
+					languageId,
+					new languageFeatures.CodeActionAdapter(worker)
+				)
+			);
+		}
 		if (modeConfiguration.foldingRanges) {
 			/*providers.push(
 				languages.registerFoldingRangeProvider(

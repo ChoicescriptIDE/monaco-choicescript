@@ -176,6 +176,10 @@ export class ChoiceScriptWorker {
 		return Promise.resolve(symbols);
 	}
 
+	async suggestSpelling(words: string[]): Promise<String[][]> {
+		return this._csLanguageService.suggestSpelling(words);
+	}
+
 	configure(settings: choicescriptService.ChoiceScriptLanguageSettings): void {
 		this._csLanguageService.configure(settings);
 	}
