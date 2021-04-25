@@ -113,6 +113,10 @@
 					}
 					return editor;
 				};
+				// configure language service
+				x = monaco.languages.choicescript._diagnosticsOptions;
+				x.spellcheck.workerPath = "/test/wordprocessor.js";
+				x = monaco.languages.choicescript.setDiagnosticsOptions(x);
 			});
 		</script>
 	</body>

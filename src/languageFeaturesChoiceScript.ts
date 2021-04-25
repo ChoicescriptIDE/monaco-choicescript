@@ -385,6 +385,66 @@ export class HoverAdapter implements languages.HoverProvider {
 	}
 }
 
+// --- CodeActions, Spelling QuickFix ---
+
+export class CodeActionAdapter implements languages.CodeActionProvider {
+	constructor(private _worker: WorkerAccessor) {}
+	provideCodeActions(
+		model: editor.IReadOnlyModel,
+		range: Range,
+		context: languages.CodeActionContext,
+		token: CancellationToken
+	): Promise<languages.CodeActionList> {
+		let resource = model.uri;
+		let words = [];
+		return this._worker(resource)
+			.then((worker) => {
+				let markers = context.markers;
+				if (markers.length <= 0)
+					return null;
+				// Only use is spellings (for now), and we limit
+				// the results to the first one, regardless of context,
+				// for performance reasons.
+				markers = markers.filter((m) => m.code === "badSpelling");
+				markers = markers.slice(0,1); //
+				for (let m of markers) {
+					var wordRange = new Range(m.startLineNumber, m.startColumn, m.endLineNumber, m.endColumn);
+					let word = model.getWordAtPosition(new Position(wordRange.startLineNumber, wordRange.startColumn));
+					if (!word) continue;
+					words.push({word: word.word, range: wordRange});
+				}
+				if (words.length <= 0)
+					return null;
+				return worker.suggestSpelling(words.map((w) => w.word));
+			})
+			.then((results) => {
+				if (!results)
+					return null;
+				let actions = [];
+				if (results.length > 0) {
+					for (var i = 0; i < results[0].length; i++) {
+						actions.push({
+							title: "Correct spelling: " + results[0][i], kind: "quickfix",
+							edit: {
+								edits: [ { edit: { range: words[0].range, text: results[0][i] }, resource: model.uri } ]
+							}
+						});
+					}
+				}
+				actions.push({ title: "Ignore '" + words[0].word + "' this session", kind: "quickfix",
+					command: { id: "addWordToDictionary", title: "Ignore Word", arguments: [words[0].word, "session"] }
+				}),
+				actions.push({ title: "Add '" + words[0].word + "' to the User Dictionary", kind: "quickfix",
+					command: { id: "addWordToDictionary", title: "Add Word", arguments: [words[0].word, "persistent"] }
+				});
+				return actions.length > 0 ? <languages.CodeActionList>{
+					actions: actions,
+					dispose: () => {},
+				} : null;
+			});
+	}
+}
+
 // --- document highlights ------
 
 /*function toDocumentHighlightKind(kind: number): languages.DocumentHighlightKind {
