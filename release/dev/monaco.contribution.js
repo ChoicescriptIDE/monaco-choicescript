@@ -13,7 +13,13 @@ define('vs/language/choicescript/fillers/monaco-editor-core',[], function () {
 define('vs/language/choicescript/monaco.contribution',["require", "exports", "./fillers/monaco-editor-core"], function (require, exports, monaco_editor_core_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.choicescriptDefaults = exports.lessDefaults = exports.scssDefaults = exports.cssDefaults = void 0;
+    exports.choicescriptDefaults = exports.lessDefaults = exports.scssDefaults = exports.cssDefaults = exports.DictionaryEvent = void 0;
+    var DictionaryEvent = /** @class */ (function () {
+        function DictionaryEvent() {
+        }
+        return DictionaryEvent;
+    }());
+    exports.DictionaryEvent = DictionaryEvent;
     // --- CSS configuration and defaults ---------
     var LanguageServiceDefaultsImpl = /** @class */ (function () {
         function LanguageServiceDefaultsImpl(languageId, diagnosticsOptions, modeConfiguration) {
@@ -121,6 +127,7 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports", "./
     var LanguageServiceDefaultsChoiceScriptImpl = /** @class */ (function () {
         function LanguageServiceDefaultsChoiceScriptImpl(languageId, diagnosticsOptions, modeConfiguration) {
             this._onDidChange = new monaco_editor_core_1.Emitter();
+            this._onDidDictionaryChange = new monaco_editor_core_1.Emitter();
             this._languageId = languageId;
             this.setDiagnosticsOptions(diagnosticsOptions);
             this.setModeConfiguration(modeConfiguration);
@@ -128,6 +135,13 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports", "./
         Object.defineProperty(LanguageServiceDefaultsChoiceScriptImpl.prototype, "onDidChange", {
             get: function () {
                 return this._onDidChange.event;
+            },
+            enumerable: false,
+            configurable: true
+        });
+        Object.defineProperty(LanguageServiceDefaultsChoiceScriptImpl.prototype, "onDictionaryChange", {
+            get: function () {
+                return this._onDidDictionaryChange.event;
             },
             enumerable: false,
             configurable: true
@@ -153,6 +167,9 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports", "./
             enumerable: false,
             configurable: true
         });
+        LanguageServiceDefaultsChoiceScriptImpl.prototype.addWordToDictionary = function (accessor, dict, word) {
+            this._onDidDictionaryChange.fire({ dictionary: dict, word: word });
+        };
         LanguageServiceDefaultsChoiceScriptImpl.prototype.setDiagnosticsOptions = function (options) {
             this._diagnosticsOptions = options || Object.create(null);
             this._onDidChange.fire(this);
@@ -199,6 +216,9 @@ define('vs/language/choicescript/monaco.contribution',["require", "exports", "./
     }
     monaco_editor_core_1.languages.onLanguage('choicescript', function () {
         //getModeCS('choicescript').then(csmode => csmode.setupMode(choicescriptDefaults));
+        monaco_editor_core_1.editor.registerCommand("addWordToDictionary", function (accessor, dict, word) {
+            exports.choicescriptDefaults.addWordToDictionary(accessor, dict, word);
+        });
         getCSMode().then(function (mode) {
             monaco_editor_core_1.languages.choicescriptDispose = mode.setupMode(exports.choicescriptDefaults);
             // handle reset on setModeConfiguration
